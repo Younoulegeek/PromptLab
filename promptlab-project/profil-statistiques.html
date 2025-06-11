@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PromptLab - Profil & Statistiques</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .hidden { display: none; }
+        .block { display: block; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-800 to-purple-900 min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div class="w-full max-w-4xl bg-white bg-opacity-15 backdrop-filter backdrop-blur-lg rounded-3xl shadow-2xl p-8 md:p-10 flex flex-col items-center">
+        <nav class="w-full mb-8 flex justify-center space-x-4">
+            <a href="index.html" class="py-2 px-4 rounded-full bg-gray-700 hover:bg-gray-600 text-white font-semibold transition-colors duration-200">Accueil</a>
+            <a href="generateur-image.html" class="py-2 px-4 rounded-full bg-gray-700 hover:bg-gray-600 text-white font-semibold transition-colors duration-200">Générateur</a>
+            <a href="outils-prompts.html" class="py-2 px-4 rounded-full bg-gray-700 hover:bg-gray-600 text-white font-semibold transition-colors duration-200">Outils</a>
+            <a href="profil-statistiques.html" class="py-2 px-4 rounded-full bg-blue-600 text-white font-semibold">Profil & Stats</a>
+            <a href="modules-apprentissage.html" class="py-2 px-4 rounded-full bg-gray-700 hover:bg-gray-600 text-white font-semibold transition-colors duration-200">Modules</a>
+        </nav>
+
+        <h1 class="text-4xl md:text-5xl font-extrabold text-center text-white mb-6 leading-tight">
+            📊 Votre Espace PromptLab
+            <span class="block text-2xl md:text-3xl font-semibold opacity-80 mt-2">
+                Profil Créatif & Statistiques d'Utilisation
+            </span>
+        </h1>
+
+        <p class="text-lg text-center text-white mb-8 opacity-90">
+            Personnalisez votre expérience et suivez votre parcours d'apprentissage en IA générative.
+        </p>
+
+        <div id="userProfileSection" class="w-full mb-10 bg-white bg-opacity-20 rounded-2xl p-6 shadow-xl border border-white border-opacity-20">
+            <h2 class="text-3xl font-bold text-center text-white mb-6">Votre Profil Créatif 👤</h2>
+            <p class="text-center text-sm text-white mb-4 opacity-75">
+                Votre ID utilisateur unique: <span id="profileUserIdDisplay" class="font-mono break-all">Chargement...</span>
+            </p>
+
+            <div id="profileForm" class="hidden">
+                <p class="text-lg text-center text-white mb-4 opacity-90">
+                    Définissez vos préférences pour des recommandations personnalisées.
+                </p>
+                <div class="mb-4">
+                    <label for="profileNameInput" class="block text-white text-xl font-semibold mb-2">Votre Nom / Pseudo :</label>
+                    <input type="text" id="profileNameInput" class="w-full p-3 rounded-lg bg-gray-700 bg-opacity-60 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-lg" placeholder="Votre nom ou pseudo" required>
+                </div>
+                <div class="mb-4">
+                    <label for="profileInterestsInput" class="block text-white text-xl font-semibold mb-2">Intérêts créatifs (ex: science-fiction, fantaisie, portraits) :</label>
+                    <textarea id="profileInterestsInput" class="w-full p-3 rounded-lg bg-gray-700 bg-opacity-60 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 h-24 resize-y text-lg" placeholder="Décrivez les thèmes ou styles que vous aimez explorer"></textarea>
+                </div>
+                <div class="mb-6">
+                    <label for="profileGoalsInput" class="block text-white text-xl font-semibold mb-2">Objectifs artistiques (ex: apprendre de nouveaux styles, créer des personnages, vendre des images) :</label>
+                    <textarea id="profileGoalsInput" class="w-full p-3 rounded-lg bg-gray-700 bg-opacity-60 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 h-24 resize-y text-lg" placeholder="Ce que vous aimeriez accomplir avec l'IA générative"></textarea>
+                </div>
+                <button id="saveProfileButton" class="w-full py-3 px-6 rounded-full bg-blue-500 hover:bg-blue-600 text-white text-xl font-bold shadow-md transition-all duration-300 ease-in-out transform hover:scale-105">
+                    Enregistrer le Profil
+                </button>
+                <div id="profileErrorMessage" class="mt-4 p-3 bg-red-700 bg-opacity-80 rounded-lg text-center font-medium text-white shadow-md hidden"></div>
+            </div>
+
+            <div id="profileDisplay" class="hidden text-center">
+                <h3 class="text-3xl font-semibold text-white mb-2" id="displayProfileName"></h3>
+                <p class="text-lg text-white mb-2"><span class="font-semibold">Intérêts:</span> <span id="displayProfileInterests"></span></p>
+                <p class="text-lg text-white mb-4"><span class="font-semibold">Objectifs:</span> <span id="displayProfileGoals"></span></p>
+                <button id="editProfileButton" class="py-2 px-5 rounded-full bg-purple-500 hover:bg-purple-600 text-white text-lg font-semibold shadow-md transition-all duration-300 ease-in-out transform hover:scale-105">
+                    Modifier le Profil
+                </button>
+            </div>
+        </div>
+
+        <div class="w-full mb-10 bg-white bg-opacity-20 rounded-2xl p-6 shadow-xl border border-white border-opacity-20">
+            <h2 class="text-3xl font-bold text-center text-white mb-6">Recommandations Personnalisées ✨</h2>
+            <p class="text-lg text-center text-white mb-4 opacity-90">
+                Obtenez des suggestions personnalisées basées sur votre profil créatif.
+            </p>
+            <button
+                id="generateRecommendationsButton"
+                class="w-full py-4 px-8 rounded-full bg-yellow-600 hover:bg-yellow-700 text-white text-2xl font-bold shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            >
+                Générer des Recommandations ✨
+            </button>
+            <div id="recommendationsResultContainer" class="mt-8 p-4 bg-gray-700 bg-opacity-40 rounded-lg text-white hidden">
+                <h3 class="text-xl font-semibold mb-4">Recommandations : </h3>
+                <ul id="recommendationsList" class="list-disc list-inside space-y-2">
+                    </ul>
+            </div>
+            <div id="recommendationsErrorMessage" class="mt-8 p-4 bg-red-700 bg-opacity-80 rounded-lg text-center font-medium text-lg text-white shadow-md hidden">
+                </div>
+        </div>
+
+        <div id="statsDisplayContainer" class="w-full mb-10 bg-white bg-opacity-20 rounded-2xl p-6 shadow-xl border border-white border-opacity-20">
+            <h2 class="text-3xl font-bold text-center text-white mb-6">Vos Statistiques d'Utilisation 📈</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-white text-lg">
+                <div class="bg-gray-700 bg-opacity-40 p-4 rounded-lg shadow-md flex justify-between items-center">
+                    <span>Générations d'Images:</span>
+                    <span id="statsImageGenCount" class="font-bold text-xl">0</span>
+                </div>
+                <div class="bg-gray-700 bg-opacity-40 p-4 rounded-lg shadow-md flex justify-between items-center">
+                    <span>Améliorations de Prompts:</span>
+                    <span id="statsImprovePromptCount" class="font-bold text-xl">0</span>
+                </div>
+                <div class="bg-gray-700 bg-opacity-40 p-4 rounded-lg shadow-md flex justify-between items-center">
+                    <span>Générations d'Idées:</span>
+                    <span id="statsIdeaGenCount" class="font-bold text-xl">0</span>
+                </div>
+                <div class="bg-gray-700 bg-opacity-40 p-4 rounded-lg shadow-md flex justify-between items-center">
+                    <span>Analyses de Prompts:</span>
+                    <span id="statsAnalyzePromptCount" class="font-bold text-xl">0</span>
+                </div>
+                <div class="bg-gray-700 bg-opacity-40 p-4 rounded-lg shadow-md flex justify-between items-center">
+                    <span>Suggestions Négatives:</span>
+                    <span id="statsNegativePromptCount" class="font-bold text-xl">0</span>
+                </div>
+                <div class="bg-gray-700 bg-opacity-40 p-4 rounded-lg shadow-md flex justify-between items-center">
+                    <span>Évaluations de Prompts:</span>
+                    <span id="statsEvaluatePromptCount" class="font-bold text-xl">0</span>
+                </div>
+                <div class="bg-gray-700 bg-opacity-40 p-4 rounded-lg shadow-md flex justify-between items-center">
+                    <span>Explorations de Styles:</span>
+                    <span id="statsExploreStyleCount" class="font-bold text-xl">0</span>
+                </div>
+                <div class="bg-gray-700 bg-opacity-40 p-4 rounded-lg shadow-md flex justify-between items-center">
+                    <span>Réécritures de Prompts:</span>
+                    <span id="statsRewritePromptCount" class="font-bold text-xl">0</span>
+                </div>
+                 <div class="bg-gray-700 bg-opacity-40 p-4 rounded-lg shadow-md flex justify-between items-center">
+                    <span>Explorations de Concepts:</span>
+                    <span id="statsExploreConceptCount" class="font-bold text-xl">0</span>
+                </div>
+                 <div class="bg-gray-700 bg-opacity-40 p-4 rounded-lg shadow-md flex justify-between items-center">
+                    <span>Débogages de Prompts:</span>
+                    <span id="statsDebugPromptCount" class="font-bold text-xl">0</span>
+                </div>
+                 <div class="bg-gray-700 bg-opacity-40 p-4 rounded-lg shadow-md flex justify-between items-center">
+                    <span>Extensions de Prompts:</span>
+                    <span id="statsExtendPromptCount" class="font-bold text-xl">0</span>
+                </div>
+            </div>
+            <div id="statsErrorMessage" class="mt-4 p-3 bg-red-700 bg-opacity-80 rounded-lg text-center font-medium text-white shadow-md hidden"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Firebase imports
+        import { initializeApp } from "./firebase-libs/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "./firebase-libs/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, increment } from "./firebase-libs/firebase-firestore.js";
+
+        // Firebase variables
+        let app;
+        let db;
+        let auth;
+        let currentUserId = null;
+
+        // DOM Elements for Profile and Stats
+        const userProfileSection = document.getElementById('userProfileSection');
+        const profileNameInput = document.getElementById('profileNameInput');
+        const profileInterestsInput = document.getElementById('profileInterestsInput');
+        const profileGoalsInput = document.getElementById('profileGoalsInput');
+        const saveProfileButton = document.getElementById('saveProfileButton');
+        const editProfileButton = document.getElementById('editProfileButton');
+        const profileDisplay = document.getElementById('profileDisplay');
+        const profileForm = document.getElementById('profileForm');
+        const displayProfileName = document.getElementById('displayProfileName');
+        const displayProfileInterests = document.getElementById('displayProfileInterests');
+        const displayProfileGoals = document.getElementById('displayProfileGoals');
+        const profileErrorMessage = document.getElementById('profileErrorMessage');
+        const profileUserIdDisplay = document.getElementById('profileUserIdDisplay');
+
+        const generateRecommendationsButton = document.getElementById('generateRecommendationsButton');
+        const recommendationsResultContainer = document.getElementById('recommendationsResultContainer');
+        const recommendationsList = document.getElementById('recommendationsList');
+        const recommendationsErrorMessage = document.getElementById('recommendationsErrorMessage');
+
+        const statsImageGenCount = document.getElementById('statsImageGenCount');
+        const statsImprovePromptCount = document.getElementById('statsImprovePromptCount');
+        const statsIdeaGenCount = document.getElementById('statsIdeaGenCount');
+        const statsAnalyzePromptCount = document.getElementById('statsAnalyzePromptCount');
+        const statsNegativePromptCount = document.getElementById('statsNegativePromptCount');
+        const statsEvaluatePromptCount = document.getElementById('statsEvaluatePromptCount');
+        const statsExploreStyleCount = document.getElementById('statsExploreStyleCount');
+        const statsRewritePromptCount = document.getElementById('statsRewritePromptCount');
+        const statsExploreConceptCount = document.getElementById('statsExploreConceptCount');
+        const statsDebugPromptCount = document.getElementById('statsDebugPromptCount');
+        const statsExtendPromptCount = document.getElementById('statsExtendPromptCount');
+        const statsErrorMessage = document.getElementById('statsErrorMessage');
+
+
+        // Utility Functions
+        function displayError(message, targetDiv) {
+            targetDiv.textContent = message;
+            targetDiv.classList.remove('hidden');
+        }
+
+        function hideError(targetDiv) {
+            targetDiv.classList.add('hidden');
+            targetDiv.textContent = '';
+        }
+
+        function showLoading(button, originalText) {
+            button.disabled = true;
+            button.dataset.originalText = originalText;
+            button.innerHTML = `
+                <svg class="animate-spin -ml-1 mr-3 h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                ${originalText.includes('Générer') ? 'Génération en cours...' : originalText.includes('Enregistrer') ? 'Enregistrement...' : originalText.includes('Améliorer') ? 'Amélioration en cours...' : 'Chargement...'}
+            `;
+        }
+
+        function hideLoading(button) {
+            button.disabled = false;
+            button.textContent = button.dataset.originalText;
+        }
+
+        // Firebase Initialization and Authentication
+        window.onload = async () => {
+            try {
+                const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        currentUserId = user.uid;
+                        console.log("Authenticated as:", currentUserId);
+                        if (profileUserIdDisplay) {
+                            profileUserIdDisplay.textContent = currentUserId;
+                        }
+                        await loadUserProfile(currentUserId);
+                        await loadUsageStats(currentUserId);
+                    } else {
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            try {
+                                await signInWithCustomToken(auth, __initial_auth_token);
+                            } catch (error) {
+                                console.error("Error signing in with custom token:", error);
+                                await signInAnonymously(auth);
+                            }
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error("Error initializing Firebase:", error);
+            }
+        };
+
+        // --- FUNCTIONS FOR USER PROFILE ---
+        async function loadUserProfile(userId) {
+            if (!db || !userId) return;
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            const profileDocRef = doc(db, `artifacts/${appId}/users/${userId}/profileData/myProfile`);
+            try {
+                const docSnap = await getDoc(profileDocRef);
+                if (docSnap.exists()) {
+                    const profileData = docSnap.data();
+                    profileNameInput.value = profileData.name || '';
+                    profileInterestsInput.value = profileData.interests || '';
+                    profileGoalsInput.value = profileData.goals || '';
+                    displayProfile(profileData);
+                    profileForm.classList.add('hidden');
+                    profileDisplay.classList.remove('hidden');
+                } else {
+                    profileForm.classList.remove('hidden');
+                    profileDisplay.classList.add('hidden');
+                }
+            } catch (error) {
+                console.error("Error loading user profile:", error);
+                displayError("Error loading your profile.", profileErrorMessage);
+                profileForm.classList.remove('hidden');
+                profileDisplay.classList.add('hidden');
+            }
+        }
+
+        function displayProfile(profileData) {
+            displayProfileName.textContent = profileData.name || 'Non défini';
+            displayProfileInterests.textContent = profileData.interests || 'Non définis';
+            displayProfileGoals.textContent = profileData.goals || 'Non définis';
+        }
+
+        saveProfileButton.addEventListener('click', async () => {
+            if (!currentUserId || !db) {
+                displayError("Authentification requise pour sauvegarder le profil.", profileErrorMessage);
+                return;
+            }
+            const name = profileNameInput.value.trim();
+            const interests = profileInterestsInput.value.trim();
+            const goals = profileGoalsInput.value.trim();
+
+            if (!name) {
+                displayError("Le nom est requis pour votre profil.", profileErrorMessage);
+                return;
+            }
+            hideError(profileErrorMessage);
+            showLoading(saveProfileButton, saveProfileButton.textContent);
+
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            const profileDocRef = doc(db, `artifacts/${appId}/users/${currentUserId}/profileData/myProfile`);
+
+            try {
+                await setDoc(profileDocRef, { name, interests, goals });
+                displayProfile({ name, interests, goals });
+                profileForm.classList.add('hidden');
+                profileDisplay.classList.remove('hidden');
+                displayError("Profil enregistré avec succès !", profileErrorMessage);
+            } catch (error) {
+                console.error("Error saving profile:", error);
+                displayError(`Error saving: ${error.message}", profileErrorMessage);
+            } finally {
+                hideLoading(saveProfileButton);
+            }
+        });
+
+        editProfileButton.addEventListener('click', () => {
+            hideError(profileErrorMessage);
+            profileForm.classList.remove('hidden');
+            profileDisplay.classList.add('hidden');
+        });
+
+        // --- FUNCTIONS FOR USAGE STATS ---
+        async function loadUsageStats(userId) {
+            if (!db || !userId) return;
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            const statsDocRef = doc(db, `artifacts/${appId}/users/${userId}/usageStats/counts`);
+            try {
+                const docSnap = await getDoc(statsDocRef);
+                if (docSnap.exists()) {
+                    const stats = docSnap.data();
+                    statsImageGenCount.textContent = stats.imageGenerations || 0;
+                    statsImprovePromptCount.textContent = stats.promptImprovements || 0;
+                    statsIdeaGenCount.textContent = stats.ideaGenerations || 0;
+                    statsAnalyzePromptCount.textContent = stats.promptAnalyses || 0;
+                    statsNegativePromptCount.textContent = stats.negativePromptSuggestions || 0;
+                    statsEvaluatePromptCount.textContent = stats.promptEvaluations || 0;
+                    statsExploreStyleCount.textContent = stats.styleExplorations || 0;
+                    statsRewritePromptCount.textContent = stats.promptRewrites || 0;
+                    statsExploreConceptCount.textContent = stats.conceptExplorations || 0;
+                    statsDebugPromptCount.textContent = stats.promptDebugging || 0;
+                    statsExtendPromptCount.textContent = stats.promptExtensions || 0;
+                } else {
+                    statsImageGenCount.textContent = 0;
+                    statsImprovePromptCount.textContent = 0;
+                    statsIdeaGenCount.textContent = 0;
+                    statsAnalyzePromptCount.textContent = 0;
+                    statsNegativePromptCount.textContent = 0;
+                    statsEvaluatePromptCount.textContent = 0;
+                    statsExploreStyleCount.textContent = 0;
+                    statsRewritePromptCount.textContent = 0;
+                    statsExploreConceptCount.textContent = 0;
+                    statsDebugPromptCount.textContent = 0;
+                    statsExtendPromptCount.textContent = 0;
+                }
+            } catch (error) {
+                console.error("Error loading usage stats:", error);
+                displayError("Error loading usage statistics.", statsErrorMessage);
+            }
+        }
+
+        async function incrementStat(statName) {
+            if (!currentUserId || !db) {
+                console.warn("Cannot increment stat: user not authenticated or db not initialized.");
+                return;
+            }
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            const statsDocRef = doc(db, `artifacts/${appId}/users/${currentUserId}/usageStats/counts`);
+            try {
+                await setDoc(statsDocRef, { [statName]: increment(1) }, { merge: true });
+                await loadUsageStats(currentUserId); // Reload stats to update display
+            } catch (error) {
+                console.error(`Error incrementing ${statName}:`, error);
+            }
+        }
+
+        // --- FUNCTIONS FOR PERSONALIZED RECOMMENDATIONS (GEMINI API) ---
+        generateRecommendationsButton.addEventListener('click', async () => {
+            if (!currentUserId || !db) {
+                displayError("Veuillez vous connecter pour obtenir des recommandations.", recommendationsErrorMessage);
+                return;
+            }
+
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            const profileDocRef = doc(db, `artifacts/${appId}/users/${currentUserId}/profileData/myProfile`);
+            let profileData = null;
+            try {
+                const docSnap = await getDoc(profileDocRef);
+                if (docSnap.exists()) {
+                    profileData = docSnap.data();
+                }
+            } catch (error) {
+                console.error("Error loading profile for recommendations:", error);
+                displayError("Error loading your profile to generate recommendations.", recommendationsErrorMessage);
+                return;
+            }
+
+            if (!profileData || (!profileData.interests && !profileData.goals)) {
+                displayError("Veuillez d'abord remplir votre profil créatif pour obtenir des recommandations personnalisées.", recommendationsErrorMessage);
+                return;
+            }
+
+            hideError(recommendationsErrorMessage);
+            recommendationsResultContainer.classList.add('hidden');
+            recommendationsList.innerHTML = '';
+            showLoading(generateRecommendationsButton, generateRecommendationsButton.textContent);
+
+            const userDescription = `Nom: ${profileData.name || 'Non spécifié'}. Intérêts créatifs: ${profileData.interests || 'Non spécifiés'}. Objectifs artistiques: ${profileData.goals || 'Non spécifiés'}.`;
+
+            try {
+                let chatHistory = [];
+                chatHistory.push({
+                    role: "user",
+                    parts: [{
+                        text: `En te basant sur le profil créatif suivant : "${userDescription}", propose 3 à 5 recommandations personnalisées pour des prompts d'images, des styles à explorer ou des sujets créatifs. Chaque recommandation doit être concise et inspirante. Présente-les sous forme de liste numérotée.`
+                    }]
+                });
+
+                const payload = { contents: chatHistory };
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`Erreur LLM: ${response.status} - ${errorData.error.message || 'Quelque chose a mal tourné'}`);
+                }
+
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const recommendationsText = result.candidates[0].content.parts[0].text.trim();
+                    const recommendationsArray = recommendationsText.split('\n').filter(line => line.trim().length > 0);
+                    recommendationsArray.forEach(rec => {
+                        const li = document.createElement('li');
+                        li.textContent = rec.replace(/^\d+\.\s*/, '');
+                        recommendationsList.appendChild(li);
+                    });
+                    recommendationsResultContainer.classList.remove('hidden');
+                } else {
+                    displayError("Aucune recommandation générée. Veuillez réessayer.", recommendationsErrorMessage);
+                }
+
+            } catch (error) {
+                console.error("Error generating recommendations:", error);
+                displayError(`Error generating recommendations: ${error.message}", recommendationsErrorMessage);
+            } finally {
+                hideLoading(generateRecommendationsButton);
+            }
+        });
+    </script>
+</body>
+</html>

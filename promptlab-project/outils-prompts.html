@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PromptLab - Outils de Prompts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .hidden { display: none; }
+        .block { display: block; }
+        .accordion-header { cursor: pointer; user-select: none; }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .accordion-content.active { max-height: 500px; transition: max-height 0.5s ease-in; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-800 to-purple-900 min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div class="w-full max-w-4xl bg-white bg-opacity-15 backdrop-filter backdrop-blur-lg rounded-3xl shadow-2xl p-8 md:p-10 flex flex-col items-center">
+        <nav class="w-full mb-8 flex justify-center space-x-4">
+            <a href="index.html" class="py-2 px-4 rounded-full bg-gray-700 hover:bg-gray-600 text-white font-semibold transition-colors duration-200">Accueil</a>
+            <a href="generateur-image.html" class="py-2 px-4 rounded-full bg-gray-700 hover:bg-gray-600 text-white font-semibold transition-colors duration-200">Générateur</a>
+            <a href="outils-prompts.html" class="py-2 px-4 rounded-full bg-pink-600 text-white font-semibold">Outils</a>
+            <a href="profil-statistiques.html" class="py-2 px-4 rounded-full bg-gray-700 hover:bg-gray-600 text-white font-semibold transition-colors duration-200">Profil & Stats</a>
+            <a href="modules-apprentissage.html" class="py-2 px-4 rounded-full bg-gray-700 hover:bg-gray-600 text-white font-semibold transition-colors duration-200">Modules</a>
+        </nav>
+
+        <h1 class="text-4xl md:text-5xl font-extrabold text-center text-white mb-6 leading-tight">
+            🛠️ Outils de Prompts
+            <span class="block text-2xl md:text-3xl font-semibold opacity-80 mt-2">
+                Boostez votre créativité et votre précision
+            </span>
+        </h1>
+
+        <p class="text-lg text-center text-white mb-8 opacity-90">
+            Explorez les différentes façons d'améliorer, d'analyser et d'optimiser vos prompts pour des résultats IA exceptionnels.
+        </p>
+
+        <div class="w-full mb-10 bg-white bg-opacity-20 rounded-2xl p-6 shadow-xl border border-white border-opacity-20">
+            <h2 class="text-3xl font-bold text-center text-white mb-6">Générer des Idées de Prompts ✨</h2>
+            <p class="text-lg text-center text-white mb-4 opacity-90">
+                Entrez un thème pour obtenir des suggestions de prompts créatifs.
+            </p>
+            <input
+                type="text"
+                id="ideaThemeInput"
+                class="w-full p-4 rounded-xl bg-gray-700 bg-opacity-60 text-white placeholder-gray-300 focus:outline-none focus:ring-4 focus:ring-green-400 mb-6 text-lg"
+                placeholder="Ex: Fantaisie médiévale, science-fiction, animaux mignons"
+            />
+            <button
+                id="generateIdeasButton"
+                class="w-full py-4 px-8 rounded-full bg-green-600 hover:bg-green-700 text-white text-2xl font-bold shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            >
+                Suggérer des Idées ✨
+            </button>
+            <div id="ideasResultContainer" class="mt-8 p-4 bg-gray-700 bg-opacity-40 rounded-lg text-white hidden">
+                <h3 class="text-xl font-semibold mb-4">Idées de Prompts : </h3>
+                <ul id="ideasList" class="list-disc list-inside space-y-2">
+                    </ul>
+            </div>
+             <div id="ideasErrorMessage" class="mt-8 p-4 bg-red-700 bg-opacity-80 rounded-lg text-center font-medium text-lg text-white shadow-md hidden">
+                </div>
+        </div>
+
+        <div class="w-full mb-10 bg-white bg-opacity-20 rounded-2xl p-6 shadow-xl border border-white border-opacity-20">
+            <h2 class="text-3xl font-bold text-center text-white mb-6">Analyser un Prompt 🔍</h2>
+            <p class="text-lg text-center text-white mb-4 opacity-90">
+                Collez un prompt pour en comprendre les composants et l'anatomie.
+            </p>
+            <textarea
+                id="analyzePromptInput"
+                class="w-full p-4 rounded-xl bg-gray-700 bg-opacity-60 text-white placeholder-gray-300 focus:outline-none focus:ring-4 focus:ring-purple-400 mb-6 h-32 resize-y text-lg"
+                placeholder="Ex: Un chevalier en armure brillante, au milieu d'une forêt sombre et mystique, lumière divine perçant les arbres, style fantastique épique, rendu cinématographique."
+            ></textarea>
+            <button
+                id="analyzeButton"
+                class="w-full py-4 px-8 rounded-full bg-purple-600 hover:bg-purple-700 text-white text-2xl font-bold shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            >
+                Analyser le Prompt 🔍
+            </button>
+            <div id="analysisResultContainer" class="mt-8 p-4 bg-gray-700 bg-opacity-40 rounded-lg text-white hidden">
+                <h3 class="text-xl font-semibold mb-4">Analyse du Prompt : </h3>
+                <div id="analysisContent">
+                    </div>
+            </div>
+             <div id="analysisErrorMessage" class="mt-8 p-4 bg-red-700 bg-opacity-80 rounded-lg text-center font-medium text-lg text-white shadow-md hidden">
+                </div>
+        </div>
+
+        <div class="w-full mb-10 bg-white bg-opacity-20 rounded-2xl p-6 shadow-xl border border-white border-opacity-20">
+            <h2 class="text-3xl font-bold text-center text-white mb-6">Suggestions de Prompts Négatifs 🚫</h2>
+            <p class="text-lg text-center text-white mb-4 opacity-90">
+                Obtenez des suggestions de prompts négatifs pour affiner vos créations.
+            </p>
+            <textarea
+                id="negativePromptInput"
+                class="w-full p-4 rounded-xl bg-gray-700 bg-opacity-60 text-white placeholder-gray-300 focus:outline-none focus:ring-4 focus:ring-orange-400 mb-6 h-32 resize-y text-lg"
+                placeholder="Ex: Une personne lisant un livre dans un parc ensoleillé."
+            ></textarea>
+            <button
+                id="suggestNegativeButton"
+                class="w-full py-4 px-8 rounded-full bg-orange-600 hover:bg-orange-700 text-white text-2xl font-bold shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            >
+                Suggérer des Négatifs 🚫
+            </button>
+            <div id="negativeResultContainer" class="mt-8 p-4 bg-gray-700 bg-opacity-40 rounded-lg text-white hidden">
+                <h3 class="text-xl font-semibold mb-4">Prompts Négatifs Suggérés : </h3>
+                <ul id="negativeList" class="list-disc list-inside space-y-2">
+                    </ul>
+            </div>
+            <div id="negativeErrorMessage" class="mt-8 p-4 bg-red-700 bg-opacity-80 rounded-lg text-center font-medium text-lg text-white shadow-md hidden">
+                </div>
+        </div>
+
+        <div class="w-full mb-10 bg-white bg-opacity-20 rounded-2xl p-6 shadow-xl border border-white border-opacity-20">
+            <h2 class="text-3xl font-bold text-center text-white mb-6">Évaluation de Prompt ✨</h2>
+            <p class="text-lg text-center text-white mb-4 opacity-90">
+                Obtenez une évaluation constructive de votre prompt et des suggestions d'amélioration.
+            </p>
+            <textarea
+                id="evaluatePromptInput"
+                class="w-full p-4 rounded-xl bg-gray-700 bg-opacity-60 text-white placeholder-gray-300 focus:outline-none focus:ring-4 focus:ring-teal-400 mb-6 h-32 resize-y text-lg"
+                placeholder="Ex: Une ville moderne la nuit."
+            ></textarea>
+            <button
+                id="evaluateButton"
+                class="w-full py-4 px-8 rounded-full bg-teal-600 hover:bg-teal-700 text-white text-2xl font-bold shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            >
+                Évaluer le Prompt ✨
+            </button>
+            <div id="evaluationResultContainer" class="mt-8 p-4 bg-gray-700 bg-opacity-40 rounded-lg text-white hidden">
+                <h3 class="text-xl font-semibold mb-4">Évaluation : </h3>
+                <div id="evaluationContent">
+                    </div>
+            </div>
+            <div id="evaluationErrorMessage" class="mt-8 p-4 bg-red-700 bg-opacity-80 rounded-lg text-center font-medium text-lg text-white shadow-md hidden">
+                </div>
+        </div>
+
+        <div class="w-full mb-10 bg-white bg-opacity-20 rounded-2xl p-6 shadow-xl border border-white border-opacity-20">
+            <h2 class="text-3xl font-bold text-center text-white mb-6">Explorateur de Styles ✨</h2>
+            <p class="text-lg text-center text-white mb-4 opacity-90">
+                Découvrez les caractéristiques d'un style artistique et des exemples de prompts.
+            </p>
+            <input
+                type="text"
+                id="styleExplorerInput"
+                class="w-full p-4 rounded-xl bg-gray-700 bg-opacity-60 text-white placeholder-gray-300 focus:outline-none focus:ring-4 focus:ring-indigo-400 mb-6 text-lg"
+                placeholder="Ex: impressionnisme, cubisme, surréalisme"
+            />
+            <button
+                id="exploreStyleButton"
+                class="w-full py-4 px-8 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white text-2xl font-bold shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            >
+                Explorer le Style ✨
+            </button>
+            <div id="styleResultContainer" class="mt-8 p-4 bg-gray-700 bg-opacity-40 rounded-lg text-white hidden">
+                <h3 class="text-xl font-semibold mb-4">Détails du Style : </h3>
+                <div id="styleContent">
+                    </div>
+            </div>
+            <div id="styleErrorMessage" class="mt-8 p-4 bg-red-700 bg-opacity-80 rounded-lg text-center font-medium text-lg text-white shadow-md hidden">
+                </div>
+        </div>
+
+        <div class="w-full mb-10 bg-white bg-opacity-20 rounded-2xl p-6 shadow-xl border border-white border-opacity-20">
+            <h2 class="text-3xl font-bold text-center text-white mb-6">Réécriture de Prompt par Style ✨</h2>
+            <p class="text-lg text-center text-white mb-4 opacity-90">
+                Entrez un prompt et un style cible pour que l'IA le réécrive.
+            </p>
+            <textarea
+                id="rewritePromptInput"
+                class="w-full p-4 rounded-xl bg-gray-700 bg-opacity-60 text-white placeholder-gray-300 focus:outline-none focus:ring-4 focus:ring-yellow-400 mb-4 h-32 resize-y text-lg"
+                placeholder="Votre prompt original (ex: un chien dans une prairie)"
+            ></textarea>
+            <input
+                type="text"
+                id="targetStyleInput"
+                class="w-full p-4 rounded-xl bg-gray-700 bg-opacity-60 text-white placeholder-gray-300 focus:outline-none focus:ring-4 focus:ring-yellow-400 mb-6 text-lg"
+                placeholder="Style cible (ex: aquarelle, photographie, peinture à l'huile)"
+            />
+            <button
+                id="rewritePromptButton"
+                class="w-full py-4 px-8 rounded-full bg-yellow-600 hover:bg-yellow-700 text-white text-2xl font-bold shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            >
+                Réécrire le Prompt ✨
+            </button>
+            <div id="rewriteResultContainer" class="mt-8 p-4 bg-gray-700 bg-opacity-40 rounded-lg text-white hidden">
+                <h3 class="text-xl font-semibold mb-4">Prompt Réécrit : </h3>
+                <div id="rewrittenPromptContent">
+                    </div>
+            </div>
+            <div id="rewriteErrorMessage" class="mt-8 p-4 bg-red-700 bg-opacity-80 rounded-lg text-center font-medium text-lg text-white shadow-md hidden">
+                </div>
+        </div>
+
+        <div class="w-full mb-10 bg-white bg-opacity-20 rounded-2xl p-6 shadow-xl border border-white border-opacity-20">
+            <h2 class="text-3xl font-bold text-center text-white mb-6">Exploration de Concept en Prompts ✨</h2>
+            <p class="text-lg text-center text-white mb-4 opacity-90">
+                Transformez une idée abstraite en plusieurs prompts d'images détaillés.
+            </p>
+            <input
+                type="text"
+                id="conceptInput"
+                class="w-full p-4 rounded-xl bg-gray-700 bg-opacity-60 text-white placeholder-gray-300 focus:outline-none focus:ring-4 focus:ring-cyan-400 mb-6 text-lg"
+                placeholder="Votre concept (ex: le temps qui passe, la solitude urbaine)"
+            />
+            <button
+                id="exploreConceptButton"
+                class="w-full py-4 px-8 rounded-full bg-cyan-600 hover:bg-cyan-700 text-white text-2xl font-bold shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            >
+                Explorer le Concept ✨
+            </button>
+            <div id="conceptResultContainer" class="mt-8 p-4 bg-gray-700 bg-opacity-40 rounded-lg text-white hidden">
+                <h3 class="text-xl font-semibold mb-4">Prompts issus du Concept : </h3>
+                <ul id="conceptPromptsList" class="list-disc list-inside space-y-2">
+                    </ul>
+            </div>
+            <div id="conceptErrorMessage" class="mt-8 p-4 bg-red-700 bg-opacity-80 rounded-lg text-center font-medium text-lg text-white shadow-md hidden">
+                </div>
+        </div>
+
+        <div class="w-full mb-10 bg-white bg-opacity-20 rounded-2xl p-6 shadow-xl border border-white border-opacity-20">
+            <h2 class="text-3xl font-bold text-center text-white mb-6">Débogueur de Prompt ✨</h2>
+            <p class="text-lg text-center text-white mb-4 opacity-90">
+                Identifiez les problèmes potentiels dans votre prompt pour de meilleurs résultats.
+            </p>
+            <textarea
+                id="debugPromptInput"
+                class="w-full p-4 rounded-xl bg-gray-700 bg-opacity-60 text-white placeholder-gray-300 focus:outline-none focus:ring-4 focus:ring-red-400 mb-6 h-32 resize-y text-lg"
+                placeholder="Le prompt à déboguer (ex: un homme heureux et triste en même temps, style photo)"
+            ></textarea>
+            <button
+                id="debugPromptButton"
+                class="w-full py-4 px-8 rounded-full bg-red-600 hover:bg-red-700 text-white text-2xl font-bold shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            >
+                Déboguer le Prompt ✨
+            </button>
+            <div id="debugResultContainer" class="mt-8 p-4 bg-gray-700 bg-opacity-40 rounded-lg text-white hidden">
+                <h3 class="text-xl font-semibold mb-4">Analyse du Débogueur : </h3>
+                <div id="debugContent">
+                    </div>
+            </div>
+            <div id="debugErrorMessage" class="mt-8 p-4 bg-red-700 bg-opacity-80 rounded-lg text-center font-medium text-lg text-white shadow-md hidden">
+                </div>
+        </div>
+
+        <div class="w-full mb-10 bg-white bg-opacity-20 rounded-2xl p-6 shadow-xl border border-white border-opacity-20">
+            <h2 class="text-3xl font-bold text-center text-white mb-6">Extension de Prompt ✨</h2>
+            <p class="text-lg text-center text-white mb-4 opacity-90">
+                Développez un prompt simple en une description riche et détaillée.
+            </p>
+            <textarea
+                id="extendPromptInput"
+                class="w-full p-4 rounded-xl bg-gray-700 bg-opacity-60 text-white placeholder-gray-300 focus:outline-none focus:ring-4 focus:ring-lime-400 mb-6 h-32 resize-y text-lg"
+                placeholder="Votre prompt court (ex: un chien qui court)"
+            ></textarea>
+            <button
+                id="extendPromptButton"
+                class="w-full py-4 px-8 rounded-full bg-lime-600 hover:bg-lime-700 text-white text-2xl font-bold shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            >
+                Étendre le Prompt ✨
+            </button>
+            <div id="extendResultContainer" class="mt-8 p-4 bg-gray-700 bg-opacity-40 rounded-lg text-white hidden">
+                <h3 class="text-xl font-semibold mb-4">Prompt Étendu : </h3>
+                <div id="extendedContent">
+                    </div>
+            </div>
+            <div id="extendErrorMessage" class="mt-8 p-4 bg-red-700 bg-opacity-80 rounded-lg text-center font-medium text-lg text-white shadow-md hidden">
+                </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Firebase imports
+        import { initializeApp } from "./firebase-libs/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "./firebase-libs/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, increment } from "./firebase-libs/firebase-firestore.js";
+
+        // Firebase variables
+        let app;
+        let db;
+        let auth;
+        let currentUserId = null;
+
+        // DOM Elements
+        const ideaThemeInput = document.getElementById('ideaThemeInput');
+        const generateIdeasButton = document.getElementById('generateIdeasButton');
+        const ideasResultContainer = document.getElementById('ideasResultContainer');
+        const ideasList = document.getElementById('ideasList');
+        const ideasErrorMessage = document.getElementById('ideasErrorMessage');
+
+        const analyzePromptInput = document.getElementById('analyzePromptInput');
+        const analyzeButton = document.getElementById('analyzeButton');
+        const analysisResultContainer = document.getElementById('analysisResultContainer');
+        const analysisContent = document.getElementById('analysisContent');
+        const analysisErrorMessage = document.getElementById('analysisErrorMessage');
+
+        const negativePromptInput = document.getElementById('negativePromptInput');
+        const suggestNegativeButton = document.getElementById('suggestNegativeButton');
+        const negativeResultContainer = document.getElementById('negativeResultContainer');
+        const negativeList = document.getElementById('negativeList');
+        const negativeErrorMessage = document.getElementById('negativeErrorMessage');
+
+        const evaluatePromptInput = document.getElementById('evaluatePromptInput');
+        const evaluateButton = document.getElementById('evaluateButton');
+        const evaluationResultContainer = document.getElementById('evaluationResultContainer');
+        const evaluationContent = document.getElementById('evaluationContent');
+        const evaluationErrorMessage = document.getElementById('evaluationErrorMessage');
+
+        const styleExplorerInput = document.getElementById('styleExplorerInput');
+        const exploreStyleButton = document.getElementById('exploreStyleButton');
+        const styleResultContainer = document.getElementById('styleResultContainer');
+        const styleContent = document.getElementById('styleContent');
+        const styleErrorMessage = document.getElementById('styleErrorMessage');
+
+        const rewritePromptInput = document.getElementById('rewritePromptInput');
+        const targetStyleInput = document.getElementById('targetStyleInput');
+        const rewritePromptButton = document.getElementById('rewritePromptButton');
+        const rewriteResultContainer = document.getElementById('rewriteResultContainer');
+        const rewrittenPromptContent = document.getElementById('rewrittenPromptContent');
+        const rewriteErrorMessage = document.getElementById('rewriteErrorMessage');
+
+        const conceptInput = document.getElementById('conceptInput');
+        const exploreConceptButton = document.getElementById('exploreConceptButton');
+        const conceptResultContainer = document.getElementById('conceptResultContainer');
+        const conceptPromptsList = document.getElementById('conceptPromptsList');
+        const conceptErrorMessage = document.getElementById('conceptErrorMessage');
+
+        const debugPromptInput = document.getElementById('debugPromptInput');
+        const debugPromptButton = document.getElementById('debugPromptButton');
+        const debugResultContainer = document.getElementById('debugResultContainer');
+        const debugContent = document.getElementById('debugContent');
+        const debugErrorMessage = document.getElementById('debugErrorMessage');
+
+        const extendPromptInput = document.getElementById('extendPromptInput');
+        const extendPromptButton = document.getElementById('extendPromptButton');
+        const extendResultContainer = document.getElementById('extendResultContainer');
+        const extendedContent = document.getElementById('extendedContent');
+        const extendErrorMessage = document.getElementById('extendErrorMessage');
+
+
+        // Utility Functions (shared)
+        function displayError(message, targetDiv) {
+            targetDiv.textContent = message;
+            targetDiv.classList.remove('hidden');
+        }
+
+        function hideError(targetDiv) {
+            targetDiv.classList.add('hidden');
+            targetDiv.textContent = '';
+        }
+
+        function showLoading(button, originalText) {
+            button.disabled = true;
+            button.dataset.originalText = originalText;
+            button.innerHTML = `
+                <svg class="animate-spin -ml-1 mr-3 h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                ${originalText.includes('Générer') ? 'Génération en cours...' : originalText.includes('Améliorer') ? 'Amélioration en cours...' : originalText.includes('Analyser') ? 'Analyse en cours...' : originalText.includes('Suggérer') ? 'Suggestions en cours...' : originalText.includes('Évaluer') ? 'Évaluation en cours...' : originalText.includes('Explorer') ? 'Exploration en cours...' : originalText.includes('Réécrire') ? 'Réécriture en cours...' : originalText.includes('Déboguer') ? 'Débogage en cours...' : originalText.includes('Étendre') ? 'Extension en cours...' : 'Chargement...'}
+            `;
+        }
+
+        function hideLoading(button) {
+            button.disabled = false;
+            button.textContent = button.dataset.originalText;
+        }
+
+        // Firebase Initialization and Authentication
+        window.onload = async () => {
+            try {
+                const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        currentUserId = user.uid;
+                        console.log("Authenticated as:", currentUserId);
+                    } else {
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            try {
+                                await signInWithCustomToken(auth, __initial_auth_token);
+                            } catch (error) {
+                                console.error("Error signing in with custom token:", error);
+                                await signInAnonymously(auth);
+                            }
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error("Error initializing Firebase:", error);
+            }
+        };
+
+        // Function to increment usage stats
+        async function incrementStat(statName) {
+            if (!currentUserId || !db) {
+                console.warn("Cannot increment stat: user not authenticated or db not initialized.");
+                return;
+            }
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            const statsDocRef = doc(db, `artifacts/${appId}/users/${currentUserId}/usageStats/counts`);
+            try {
+                await setDoc(statsDocRef, { [statName]: increment(1) }, { merge: true });
+            } catch (error) {
+                console.error(`Error incrementing ${statName}:`, error);
+            }
+        }
+
+
+        // Generate Ideas (Gemini API)
+        generateIdeasButton.addEventListener('click', async () => {
+            const theme = ideaThemeInput.value.trim();
+            if (!theme) { displayError("Veuillez entrer un thème pour générer des idées.", ideasErrorMessage); return; }
+            hideError(ideasErrorMessage); ideasResultContainer.classList.add('hidden'); ideasList.innerHTML = ''; showLoading(generateIdeasButton, generateIdeasButton.textContent);
+            try {
+                let chatHistory = [];
+                chatHistory.push({ role: "user", parts: [{ text: `Génère 5 idées de prompts créatifs et uniques pour la génération d'images basées sur le thème suivant : "${theme}". Chaque idée doit être un prompt complet, direct et descriptif, incluant des éléments de style, d'éclairage ou de composition. Présente la réponse sous forme de liste numérotée.` }] });
+                const payload = { contents: chatHistory }; const apiKey = ""; const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!response.ok) { const errorData = await response.json(); throw new Error(`Erreur LLM: ${response.status} - ${errorData.error.message || 'Quelque chose a mal tourné'}`); }
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                    const ideasText = result.candidates[0].content.parts[0].text.trim();
+                    const ideasArray = ideasText.split('\n').filter(line => line.trim().length > 0);
+                    ideasArray.forEach(idea => { const li = document.createElement('li'); li.textContent = idea.replace(/^\d+\.\s*/, ''); ideasList.appendChild(li); });
+                    ideasResultContainer.classList.remove('hidden');
+                } else { displayError("Aucune idée générée. Veuillez réessayer avec un thème différent.", ideasErrorMessage); }
+            } catch (error) { console.error("Erreur lors de la génération d'idées:", error); displayError(`Échec de la génération d'idées: ${error.message}", ideasErrorMessage); }
+            finally { hideLoading(generateIdeasButton); }
+            await incrementStat('ideaGenerations');
+        });
+
+        // Analyze Prompt (Gemini API)
+        analyzeButton.addEventListener('click', async () => {
+            const promptToAnalyze = analyzePromptInput.value.trim();
+            if (!promptToAnalyze) { displayError("Veuillez entrer un prompt à analyser.", analysisErrorMessage); return; }
+            hideError(analysisErrorMessage); analysisResultContainer.classList.add('hidden'); analysisContent.innerHTML = ''; showLoading(analyzeButton, analyzeButton.textContent);
+            try {
+                let chatHistory = [];
+                chatHistory.push({ role: "user", parts: [{ text: `Analyse le prompt suivant pour la génération d'images. Décompose-le en ses composants clés comme le sujet, l'action/contexte, le style artistique, l'éclairage, la composition, l'ambiance, et d'autres détails importants. Présente l'analyse de manière claire et structurée, comme une liste ou des paragraphes distincts pour chaque composant. Voici le prompt à analyser: "${promptToAnalyze}"` }] });
+                const payload = { contents: chatHistory }; const apiKey = ""; const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!response.ok) { const errorData = await response.json(); throw new Error(`Erreur LLM: ${response.status} - ${errorData.error.message || 'Quelque chose a mal tourné'}`); }
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                    const analysisText = result.candidates[0].content.parts[0].text;
+                    analysisContent.innerHTML = analysisText.replace(/\n\s*\n/g, '</p><p>');
+                    if (!analysisContent.innerHTML.startsWith('<p>')) { analysisContent.innerHTML = '<p>' + analysisContent.innerHTML; }
+                    if (!analysisContent.innerHTML.endsWith('</p>')) { analysisContent.innerHTML = analysisContent.innerHTML + '</p>'; }
+                    analysisResultContainer.classList.remove('hidden');
+                } else { displayError("Impossible d'analyser le prompt. Veuillez réessayer.", analysisErrorMessage); }
+            } catch (error) { console.error("Erreur lors de l'analyse du prompt:", error); displayError(`Échec de l'analyse: ${error.message}", analysisErrorMessage); }
+            finally { hideLoading(analyzeButton); }
+            await incrementStat('promptAnalyses');
+        });
+
+        // Suggest Negative Prompts (Gemini API)
+        suggestNegativeButton.addEventListener('click', async () => {
+            const positivePrompt = negativePromptInput.value.trim();
+            if (!positivePrompt) { displayError("Veuillez entrer un prompt positif pour obtenir des suggestions négatives.", negativeErrorMessage); return; }
+            hideError(negativeErrorMessage); negativeResultContainer.classList.add('hidden'); negativeList.innerHTML = ''; showLoading(suggestNegativeButton, suggestNegativeButton.textContent);
+            try {
+                let chatHistory = [];
+                chatHistory.push({ role: "user", parts: [{ text: `Pour le prompt positif suivant : "${positivePrompt}", suggère 3 à 5 prompts négatifs courants qui pourraient aider à éviter les résultats indésirables ou les artefacts, ou à améliorer la qualité générale de l'image. Chaque suggestion doit être un terme ou une courte phrase, et la réponse doit être une liste numérotée de ces prompts négatifs. Sois concis.` }] });
+                const payload = { contents: chatHistory }; const apiKey = ""; const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!response.ok) { const errorData = await response.json(); throw new Error(`Erreur LLM: ${response.status} - ${errorData.error.message || 'Quelque chose a mal tourné'}`); }
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                    const negativePromptsText = result.candidates[0].content.parts[0].text.trim();
+                    const negativePromptsArray = negativePromptsText.split('\n').filter(line => line.trim().length > 0);
+                    negativePromptsArray.forEach(prompt => { const li = document.createElement('li'); li.textContent = prompt.replace(/^\d+\.\s*/, ''); negativeList.appendChild(li); });
+                    negativeResultContainer.classList.remove('hidden');
+                } else { displayError("Aucune suggestion de prompt négatif. Veuillez réessayer.", negativeErrorMessage); }
+            } catch (error) { console.error("Erreur lors de la suggestion de prompts négatifs:", error); displayError(`Échec de la suggestion: ${error.message}", negativeErrorMessage); }
+            finally { hideLoading(suggestNegativeButton); }
+            await incrementStat('negativePromptSuggestions');
+        });
+
+        // Evaluate Prompt (Gemini API)
+        evaluateButton.addEventListener('click', async () => {
+            const promptToEvaluate = evaluatePromptInput.value.trim();
+            if (!promptToEvaluate) { displayError("Veuillez entrer un prompt à évaluer.", evaluationErrorMessage); return; }
+            hideError(evaluationErrorMessage); evaluationResultContainer.classList.add('hidden'); evaluationContent.innerHTML = ''; showLoading(evaluateButton, evaluateButton.textContent);
+            try {
+                let chatHistory = [];
+                chatHistory.push({ role: "user", parts: [{ text: `Évalue le prompt suivant pour la génération d'images. Donne une note (par exemple, sur 10) si possible, et explique les points forts et les points à améliorer pour obtenir une image de meilleure qualité. Sois constructif et concis. Voici le prompt: "${promptToEvaluate}"` }] });
+                const payload = { contents: chatHistory }; const apiKey = ""; const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!response.ok) { const errorData = await response.json(); throw new Error(`Erreur LLM: ${response.status} - ${errorData.error.message || 'Quelque chose a mal tourné'}`); }
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                    const evaluationText = result.candidates[0].content.parts[0].text;
+                    evaluationContent.innerHTML = evaluationText.replace(/\n\s*\n/g, '</p><p>');
+                    if (!evaluationContent.innerHTML.startsWith('<p>')) { evaluationContent.innerHTML = '<p>' + evaluationContent.innerHTML; }
+                    if (!evaluationContent.innerHTML.endsWith('</p>')) { evaluationContent.innerHTML = evaluationContent.innerHTML + '</p>'; }
+                    evaluationResultContainer.classList.remove('hidden');
+                } else { displayError("Impossible d'évaluer le prompt. Veuillez réessayer.", evaluationErrorMessage); }
+            } catch (error) { console.error("Erreur lors de l'évaluation du prompt:", error); displayError(`Échec de l'évaluation: ${error.message}", evaluationErrorMessage); }
+            finally { hideLoading(evaluateButton); }
+            await incrementStat('promptEvaluations');
+        });
+
+        // Explore Style (Gemini API)
+        exploreStyleButton.addEventListener('click', async () => {
+            const styleName = styleExplorerInput.value.trim();
+            if (!styleName) { displayError("Veuillez entrer un nom de style à explorer.", styleErrorMessage); return; }
+            hideError(styleErrorMessage); styleResultContainer.classList.add('hidden'); styleContent.innerHTML = ''; showLoading(exploreStyleButton, exploreStyleButton.textContent);
+            try {
+                let chatHistory = [];
+                chatHistory.push({ role: "user", parts: [{ text: `Décris brièvement le style artistique "${styleName}" et donne 2-3 exemples de fragments de prompts pour la génération d'images qui intègrent ce style. Le format doit être : Description du style, puis une liste à puces des exemples de prompts. Sois concis.` }] });
+                const payload = { contents: chatHistory }; const apiKey = ""; const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!response.ok) { const errorData = await response.json(); throw new Error(`Erreur LLM: ${response.status} - ${errorData.error.message || 'Quelque chose a mal tourné'}`); }
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                    const styleText = result.candidates[0].content.parts[0].text;
+                    styleContent.innerHTML = styleText.replace(/\n\s*-\s*/g, '</li><li>').replace(/^\s*-\s*/, '<li>') + '</li>';
+                    if (!styleContent.innerHTML.startsWith('<p>')) { styleContent.innerHTML = '<p>' + styleContent.innerHTML; }
+                    if (!styleContent.innerHTML.endsWith('</p>') && !styleContent.innerHTML.endsWith('</li>')) { styleContent.innerHTML = styleContent.innerHTML + '</p>'; } else if (styleContent.innerHTML.endsWith('</li>')) { styleContent.innerHTML = '<ul>' + styleContent.innerHTML + '</ul>'; }
+                    let finalHtml = styleContent.innerHTML;
+                    if (finalHtml.startsWith('<p>Description du style:')) { finalHtml = finalHtml.replace('<p>Description du style:', '<p>'); }
+                    if (finalHtml.startsWith('<p>Description du style :')) { finalHtml = finalHtml.replace('<p>Description du style :', '<p>'); }
+                    const ulStartIndex = finalHtml.indexOf('<ul>');
+                    if (ulStartIndex > 0 && finalHtml.substring(0, ulStartIndex).includes('</p>')) {
+                        const lastPBeforeUl = finalHtml.lastIndexOf('</p>', ulStartIndex);
+                        if (lastPBeforeUl !== -1) { finalHtml = finalHtml.substring(0, lastPBeforeUl + 4) + '<br/>' + finalHtml.substring(lastPBeforeUl + 4); }
+                    }
+                    styleContent.innerHTML = finalHtml;
+                    styleResultContainer.classList.remove('hidden');
+                } else { displayError("Impossible d'explorer ce style. Veuillez réessayer.", styleErrorMessage); }
+            } catch (error) { console.error("Erreur lors de l'exploration du style:", error); displayError(`Échec de l'exploration: ${error.message}", styleErrorMessage); }
+            finally { hideLoading(exploreStyleButton); }
+            await incrementStat('styleExplorations');
+        });
+
+        // Rewrite Prompt by Style/Model (Gemini API)
+        rewritePromptButton.addEventListener('click', async () => {
+            const originalPrompt = rewritePromptInput.value.trim();
+            const targetStyle = targetStyleInput.value.trim();
+
+            if (!originalPrompt || !targetStyle) {
+                displayError("Veuillez entrer le prompt original et le style cible.", rewriteErrorMessage);
+                return;
+            }
+
+            hideError(rewriteErrorMessage);
+            rewriteResultContainer.classList.add('hidden');
+            rewrittenPromptContent.innerHTML = '';
+            showLoading(rewritePromptButton, rewritePromptButton.textContent);
+
+            try {
+                let chatHistory = [];
+                chatHistory.push({
+                    role: "user",
+                    parts: [{
+                        text: `Réécris le prompt suivant pour la génération d'images afin qu'il corresponde au style artistique ou au modèle suivant : "${targetStyle}". Assure-toi que le nouveau prompt est détaillé, créatif et prêt à l'emploi. Le prompt original est : "${originalPrompt}".`
+                    }]
+                });
+
+                const payload = { contents: chatHistory };
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`Erreur LLM: ${response.status} - ${errorData.error.message || 'Quelque chose a mal tourné'}`);
+                }
+
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const rewrittenPrompt = result.candidates[0].content.parts[0].text.trim();
+                    rewrittenPromptContent.textContent = rewrittenPrompt;
+                    rewriteResultContainer.classList.remove('hidden');
+                } else {
+                    displayError("Impossible de réécrire le prompt. Veuillez réessayer.", rewriteErrorMessage);
+                }
+
+            } catch (error) {
+                console.error("Erreur lors de la réécriture du prompt:", error);
+                displayError(`Échec de la réécriture: ${error.message}", rewriteErrorMessage);
+            } finally {
+                hideLoading(rewritePromptButton);
+            }
+            await incrementStat('promptRewrites'); // Increment stat for this new feature
+        });
+
+        // Explore Concept in Prompts (Gemini API)
+        exploreConceptButton.addEventListener('click', async () => {
+            const concept = conceptInput.value.trim();
+
+            if (!concept) {
+                displayError("Veuillez entrer un concept à explorer.", conceptErrorMessage);
+                return;
+            }
+
+            hideError(conceptErrorMessage);
+            conceptResultContainer.classList.add('hidden');
+            conceptPromptsList.innerHTML = '';
+            showLoading(exploreConceptButton, exploreConceptButton.textContent);
+
+            try {
+                let chatHistory = [];
+                chatHistory.push({
+                    role: "user",
+                    parts: [{
+                        text: `Transforme le concept suivant : "${concept}", en 3 à 5 prompts d'images créatifs et détaillés. Chaque prompt doit être unique, inclure des éléments de style, de composition, d'éclairage, et d'ambiance, et être prêt à l'emploi par un modèle de génération d'images. Présente la réponse sous forme de liste numérotée.`
+                    }]
+                });
+
+                const payload = { contents: chatHistory };
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`Erreur LLM: ${response.status} - ${errorData.error.message || 'Quelque chose a mal tourné'}`);
+                }
+
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const conceptPromptsText = result.candidates[0].content.parts[0].text.trim();
+                    const conceptPromptsArray = conceptPromptsText.split('\n').filter(line => line.trim().length > 0);
+                    conceptPromptsArray.forEach(prompt => {
+                        const li = document.createElement('li');
+                        li.textContent = prompt.replace(/^\d+\.\s*/, '');
+                        conceptPromptsList.appendChild(li);
+                    });
+                    conceptResultContainer.classList.remove('hidden');
+                } else {
+                    displayError("Impossible d'explorer le concept. Veuillez réessayer.", conceptErrorMessage);
+                }
+
+            } catch (error) {
+                console.error("Erreur lors de l'exploration du concept:", error);
+                displayError(`Échec de l'exploration: ${error.message}", conceptErrorMessage);
+            } finally {
+                hideLoading(exploreConceptButton);
+            }
+            await incrementStat('conceptExplorations'); // Increment stat for this new feature
+        });
+
+        // Débogueur de Prompt (Gemini API)
+        debugPromptButton.addEventListener('click', async () => {
+            const promptToDebug = debugPromptInput.value.trim();
+
+            if (!promptToDebug) {
+                displayError("Veuillez entrer un prompt à déboguer.", debugErrorMessage);
+                return;
+            }
+
+            hideError(debugErrorMessage);
+            debugResultContainer.classList.add('hidden');
+            debugContent.innerHTML = '';
+            showLoading(debugPromptButton, debugPromptButton.textContent);
+
+            try {
+                let chatHistory = [];
+                chatHistory.push({
+                    role: "user",
+                    parts: [{
+                        text: `Analyse le prompt suivant pour la génération d'images. Identifie les problèmes potentiels tels que les ambiguïtés, les informations manquantes, les contradictions ou les termes qui pourraient conduire à des résultats indésirables. Suggère des améliorations spécifiques. Présente l'analyse de manière claire et structurée. Voici le prompt à déboguer: "${promptToDebug}"`
+                    }]
+                });
+
+                const payload = { contents: chatHistory };
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`Erreur LLM: ${response.status} - ${errorData.error.message || 'Quelque chose a mal tourné'}`);
+                }
+
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const debugAnalysis = result.candidates[0].content.parts[0].text;
+                    debugContent.innerHTML = debugAnalysis.replace(/\n\s*\n/g, '</p><p>');
+                    if (!debugContent.innerHTML.startsWith('<p>')) {
+                        debugContent.innerHTML = '<p>' + debugContent.innerHTML;
+                    }
+                    if (!debugContent.innerHTML.endsWith('</p>')) {
+                        debugContent.innerHTML = debugContent.innerHTML + '</p>';
+                    }
+                    debugResultContainer.classList.remove('hidden');
+                } else {
+                    displayError("Impossible de déboguer le prompt. Veuillez réessayer.", debugErrorMessage);
+                }
+
+            } catch (error) {
+                console.error("Erreur lors du débogage du prompt:", error);
+                displayError(`Échec du débogage: ${error.message}", debugErrorMessage);
+            } finally {
+                hideLoading(debugPromptButton);
+            }
+            await incrementStat('promptDebugging'); // Incrémenter la nouvelle statistique
+        });
+
+        // Extension de Prompt (Gemini API)
+        extendPromptButton.addEventListener('click', async () => {
+            const shortPrompt = extendPromptInput.value.trim();
+
+            if (!shortPrompt) {
+                displayError("Veuillez entrer un prompt court à étendre.", extendErrorMessage);
+                return;
+            }
+
+            hideError(extendErrorMessage);
+            extendResultContainer.classList.add('hidden');
+            extendedContent.innerHTML = '';
+            showLoading(extendPromptButton, extendPromptButton.textContent);
+
+            try {
+                let chatHistory = [];
+                chatHistory.push({
+                    role: "user",
+                    parts: [{
+                        text: `Prends le prompt d'image suivant : "${shortPrompt}", et étends-le en un prompt beaucoup plus détaillé et riche. Ajoute des informations sur le contexte, l'éclairage, la composition, l'ambiance, les détails spécifiques des éléments, et le style artistique. Le prompt final doit être prêt à l'emploi par un modèle de génération d'images, avec une longueur significative.`
+                    }]
+                });
+
+                const payload = { contents: chatHistory };
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`Erreur LLM: ${response.status} - ${errorData.error.message || 'Quelque chose a mal tourné'}`);
+                }
+
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const extendedPrompt = result.candidates[0].content.parts[0].text.trim();
+                    extendedContent.textContent = extendedPrompt;
+                    extendResultContainer.classList.remove('hidden');
+                } else {
+                    displayError("Impossible d'étendre le prompt. Veuillez réessayer.", extendErrorMessage);
+                }
+
+            } catch (error) {
+                console.error("Erreur lors de l'extension du prompt:", error);
+                displayError(`Échec de l'extension: ${error.message}", extendErrorMessage);
+            } finally {
+                hideLoading(extendPromptButton);
+            }
+            await incrementStat('promptExtensions'); // Incrémenter la nouvelle statistique
+        });
+    </script>
+</body>
+</html>

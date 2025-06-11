@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PromptLab - Modules d'Apprentissage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .hidden { display: none; }
+        .block { display: block; }
+        .accordion-header { cursor: pointer; user-select: none; }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .accordion-content.active { max-height: 500px; transition: max-height 0.5s ease-in; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-800 to-purple-900 min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div class="w-full max-w-4xl bg-white bg-opacity-15 backdrop-filter backdrop-blur-lg rounded-3xl shadow-2xl p-8 md:p-10 flex flex-col items-center">
+        <nav class="w-full mb-8 flex justify-center space-x-4">
+            <a href="index.html" class="py-2 px-4 rounded-full bg-gray-700 hover:bg-gray-600 text-white font-semibold transition-colors duration-200">Accueil</a>
+            <a href="generateur-image.html" class="py-2 px-4 rounded-full bg-gray-700 hover:bg-gray-600 text-white font-semibold transition-colors duration-200">Générateur</a>
+            <a href="outils-prompts.html" class="py-2 px-4 rounded-full bg-gray-700 hover:bg-gray-600 text-white font-semibold transition-colors duration-200">Outils</a>
+            <a href="profil-statistiques.html" class="py-2 px-4 rounded-full bg-gray-700 hover:bg-gray-600 text-white font-semibold transition-colors duration-200">Profil & Stats</a>
+            <a href="modules-apprentissage.html" class="py-2 px-4 rounded-full bg-teal-600 text-white font-semibold">Modules</a>
+        </nav>
+
+        <h1 class="text-4xl md:text-5xl font-extrabold text-center text-white mb-6 leading-tight">
+            📚 Modules d'Apprentissage
+            <span class="block text-2xl md:text-3xl font-semibold opacity-80 mt-2">
+                Maîtrisez les fondations du Prompting IA
+            </span>
+        </h1>
+
+        <p class="text-lg text-center text-white mb-8 opacity-90">
+            Parcourez ces modules pour comprendre l'anatomie d'un prompt efficace, explorer divers styles artistiques et apprendre des techniques avancées.
+        </p>
+
+        <div class="w-full bg-white bg-opacity-20 rounded-2xl p-6 shadow-xl border border-white border-opacity-20">
+            <div class="mb-4 rounded-lg bg-gray-800 bg-opacity-50 p-4">
+                <div class="accordion-header text-xl font-semibold text-white py-2 flex justify-between items-center">
+                    <span>1. Les Bases : Anatomie d'un Prompt Image</span>
+                    <span class="transform transition-transform duration-300 accordion-arrow">▼</span>
+                </div>
+                <div class="accordion-content pt-2 text-white text-opacity-80">
+                    <p class="mb-2">Un prompt est comme une instruction donnée à l'IA. Pour une image, il contient généralement :</p>
+                    <ul class="list-disc list-inside ml-4 mb-4">
+                        <li>**Sujet principal :** Ce que vous voulez voir (ex: un chat, une montagne).</li>
+                        <li>**Action/Contexte :** Ce que fait le sujet ou où il se trouve (ex: lisant un livre, sous la pluie).</li>
+                        <li>**Style artistique :** Comment l'image doit ressembler (ex: peinture à l'huile, pixel art, photo réaliste).</li>
+                        <li>**Détails supplémentaires :** Couleurs, ambiance, éclairage, heure de la journée (ex: couleurs vives, lumière douce, crépuscule).</li>
+                    </ul>
+                    <p>Plus votre prompt est précis et descriptif, plus le résultat sera proche de votre vision.</p>
+                </div>
+            </div>
+
+            <div class="mb-4 rounded-lg bg-gray-800 bg-opacity-50 p-4">
+                <div class="accordion-header text-xl font-semibold text-white py-2 flex justify-between items-center">
+                    <span>2. Styles Visuels : Explorer l'Esthétique</span>
+                    <span class="transform transition-transform duration-300 accordion-arrow">▼</span>
+                </div>
+                <div class="accordion-content pt-2 text-white text-opacity-80">
+                    <p class="mb-2">Les styles sont cruciaux pour donner du caractère à vos images. Essayez ces exemples :</p>
+                    <ul class="list-disc list-inside ml-4 mb-4">
+                        <li>**Cyberpunk :** Univers futuriste, néons, haute technologie, basse vie.</li>
+                        <li>**Renaissance :** Lumière douce, portraits détaillés, scènes bibliques ou mythologiques.</li>
+                        <li>**Steampunk :** Technologie à vapeur, engrenages, victorien.</li>
+                        <li>**Minimaliste :** Formes simples, palette de couleurs limitée, accent sur l'espace.</li>
+                        <li>**Photographique :** Simule une photo réelle, avec des détails comme l'objectif, la profondeur de champ.</li>
+                    </ul>
+                    <p>Combinez les styles pour des résultats uniques !</p>
+                </div>
+            </div>
+
+            <div class="mb-4 rounded-lg bg-gray-800 bg-opacity-50 p-4">
+                <div class="accordion-header text-xl font-semibold text-white py-2 flex justify-between items-center">
+                    <span>3. Composition : Lumière, Angles et Règle des Tiers</span>
+                    <span class="transform transition-transform duration-300 accordion-arrow">▼</span>
+                </div>
+                <div class="accordion-content pt-2 text-white text-opacity-80">
+                    <p class="mb-2">La composition guide l'IA sur la manière d'organiser les éléments dans l'image :</p>
+                    <ul class="list-disc list-inside ml-4 mb-4">
+                        <li>**Lumière :** `lumière du soleil`, `lumière douce`, `lumière dure`, `contre-jour`, `éclairage de studio`.</li>
+                        <li>**Angles :** `vue aérienne`, `gros plan`, `plan large`, `vue d'oiseau`, `vue à hauteur des yeux`.</li>
+                        <li>**Règle des Tiers :** Ajoutez `composition règle des tiers` pour une image équilibrée.</li>
+                        <li>**Profondeur de Champ :** `faible profondeur de champ` (arrière-plan flou), `grande profondeur de champ` (tout est net).</li>
+                    </ul>
+                    <p>Ces éléments peuvent radicalement changer l'impact visuel de votre création.</p>
+                </div>
+            </div>
+
+            <div class="mb-4 rounded-lg bg-gray-800 bg-opacity-50 p-4">
+                <div class="accordion-header text-xl font-semibold text-white py-2 flex justify-between items-center">
+                    <span>4. Avancé : Negative Prompts, Poids et Seeds</span>
+                    <span class="transform transition-transform duration-300 accordion-arrow">▼</span>
+                </div>
+                <div class="accordion-content pt-2 text-white text-opacity-80">
+                    <p class="mb-2">Pour un contrôle plus fin :</p>
+                    <ul class="list-disc list-inside ml-4 mb-4">
+                        <li>**Negative Prompts :** Indiquent à l'IA ce que vous *ne voulez pas* voir (ex: `pas de texte, pas de mains déformées`).</li>
+                        <li>**Poids (Weights) :** Dans certains modèles, vous pouvez donner plus d'importance à certains mots (ex: `chat:1.5, chien:0.5`).</li>
+                        <li>**Seeds :** Un nombre qui permet de reproduire exactement la même image si vous utilisez le même prompt et les mêmes paramètres.</li>
+                    </ul>
+                    <p>Ces techniques nécessitent de l'expérimentation mais offrent des résultats exceptionnels.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements for Accordion
+        const accordionHeaders = document.querySelectorAll('.accordion-header');
+
+        // Accordion Logic
+        accordionHeaders.forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                const arrow = header.querySelector('.accordion-arrow');
+
+                // Close all other open modules
+                accordionHeaders.forEach(otherHeader => {
+                    if (otherHeader !== header) {
+                        const otherContent = otherHeader.nextElementSibling;
+                        const otherArrow = otherHeader.querySelector('.accordion-arrow');
+                        if (otherContent.classList.contains('active')) {
+                            otherContent.classList.remove('active');
+                            otherArrow.classList.remove('rotate-180');
+                        }
+                    }
+                });
+
+                // Open or close the clicked module
+                content.classList.toggle('active');
+                arrow.classList.toggle('rotate-180');
+            });
+        });
+    </script>
+</body>
+</html>
