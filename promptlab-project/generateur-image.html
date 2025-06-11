@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PromptLab - Générateur d'Images</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .hidden { display: none; }
+        .block { display: block; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-800 to-purple-900 min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div class="w-full max-w-4xl bg-white bg-opacity-15 backdrop-filter backdrop-blur-lg rounded-3xl shadow-2xl p-8 md:p-10 flex flex-col items-center">
+        <nav class="w-full mb-8 flex justify-center space-x-4">
+            <a href="index.html" class="py-2 px-4 rounded-full bg-gray-700 hover:bg-gray-600 text-white font-semibold transition-colors duration-200">Accueil</a>
+            <a href="generateur-image.html" class="py-2 px-4 rounded-full bg-purple-600 text-white font-semibold">Générateur</a>
+            <a href="outils-prompts.html" class="py-2 px-4 rounded-full bg-gray-700 hover:bg-gray-600 text-white font-semibold transition-colors duration-200">Outils</a>
+            <a href="profil-statistiques.html" class="py-2 px-4 rounded-full bg-gray-700 hover:bg-gray-600 text-white font-semibold transition-colors duration-200">Profil & Stats</a>
+            <a href="modules-apprentissage.html" class="py-2 px-4 rounded-full bg-gray-700 hover:bg-gray-600 text-white font-semibold transition-colors duration-200">Modules</a>
+        </nav>
+
+        <h1 class="text-4xl md:text-5xl font-extrabold text-center text-white mb-6 leading-tight">
+            🖼️ Générateur d'Images
+            <span class="block text-2xl md:text-3xl font-semibold opacity-80 mt-2">
+                Transformez vos mots en images avec l'IA
+            </span>
+        </h1>
+
+        <p class="text-lg text-center text-white mb-8 opacity-90">
+            Saisissez votre prompt dans la zone de texte, utilisez les tags pour l'enrichir, puis générez votre image.
+        </p>
+
+        <textarea
+            id="promptInput"
+            class="w-full p-5 rounded-xl bg-gray-700 bg-opacity-60 text-white placeholder-gray-300 focus:outline-none focus:ring-4 focus:ring-blue-400 mb-6 h-40 resize-y text-lg transition-all duration-300"
+            placeholder="Ex: Un chat cosmonaute dans l'espace, style peinture à l'huile, couleurs vives, éclairage dramatique"
+        ></textarea>
+
+        <div class="mb-6 w-full">
+            <h3 class="text-xl font-semibold text-white mb-3">Ajoutez des éléments à votre prompt :</h3>
+            <div class="flex flex-wrap gap-3">
+                <button class="prompt-tag bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium py-2 px-4 rounded-full transition-all duration-200" data-value="style cyberpunk">Cyberpunk</button>
+                <button class="prompt-tag bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium py-2 px-4 rounded-full transition-all duration-200" data-value="style renaissance">Renaissance</button>
+                <button class="prompt-tag bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium py-2 px-4 rounded-full transition-all duration-200" data-value="style dessin animé">Dessin Animé</button>
+                <button class="prompt-tag bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium py-2 px-4 rounded-full transition-all duration-200" data-value="éclairage dramatique">Éclairage Dramatique</button>
+                <button class="prompt-tag bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium py-2 px-4 rounded-full transition-all duration-200" data-value="vue aérienne">Vue Aérienne</button>
+                <button class="prompt-tag bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium py-2 px-4 rounded-full transition-all duration-200" data-value="couleurs pastel">Couleurs Pastel</button>
+                <button class="prompt-tag bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium py-2 px-4 rounded-full transition-all duration-200" data-value="4k">4K</button>
+                <button class="prompt-tag bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium py-2 px-4 rounded-full transition-all duration-200" data-value="photographique">Photographique</button>
+            </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-4 mb-6 w-full">
+            <button
+                id="generateButton"
+                class="flex-1 py-4 px-8 rounded-full bg-pink-600 hover:bg-pink-700 text-white text-2xl font-bold shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            >
+                Générer l'Image
+            </button>
+            <button
+                id="improvePromptButton"
+                class="flex-1 py-4 px-8 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-2xl font-bold shadow-xl transition-all duration-300 ease-in-out transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            >
+                Améliorer le Prompt ✨
+            </button>
+        </div>
+
+        <div id="errorMessage" class="mt-8 p-4 bg-red-700 bg-opacity-80 rounded-lg text-center font-medium text-lg text-white shadow-md hidden w-full">
+            </div>
+
+        <div id="imageResultContainer" class="mt-10 w-full bg-white bg-opacity-10 p-6 rounded-2xl shadow-inner flex flex-col items-center border border-white border-opacity-30 hidden">
+            <h2 class="text-3xl font-bold mb-6 text-center text-white">Votre Création :</h2>
+            <img
+                id="generatedImage"
+                src=""
+                alt="Image générée par l'IA"
+                class="w-full h-auto rounded-xl shadow-lg border-4 border-purple-400 transition-all duration-300 transform hover:scale-[1.01]"
+            />
+        </div>
+    </div>
+
+    <script type="module">
+        // Firebase imports - Note: paths are relative to the HTML file
+        import { initializeApp } from "./firebase-libs/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "./firebase-libs/firebase-auth.js";
+        import { getFirestore, doc, setDoc, updateDoc, increment } from "./firebase-libs/firebase-firestore.js";
+
+        // Firebase variables
+        let app;
+        let db;
+        let auth;
+        let currentUserId = null;
+
+        // DOM Elements
+        const promptInput = document.getElementById('promptInput');
+        const generateButton = document.getElementById('generateButton');
+        const improvePromptButton = document.getElementById('improvePromptButton');
+        const errorMessageDiv = document.getElementById('errorMessage');
+        const imageResultContainer = document.getElementById('imageResultContainer');
+        const generatedImage = document.getElementById('generatedImage');
+        const promptTags = document.querySelectorAll('.prompt-tag');
+
+        // Utility Functions
+        function displayError(message, targetDiv) {
+            targetDiv.textContent = message;
+            targetDiv.classList.remove('hidden');
+        }
+
+        function hideError(targetDiv) {
+            targetDiv.classList.add('hidden');
+            targetDiv.textContent = '';
+        }
+
+        function showLoading(button, originalText) {
+            button.disabled = true;
+            button.dataset.originalText = originalText;
+            button.innerHTML = `
+                <svg class="animate-spin -ml-1 mr-3 h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                ${originalText.includes('Générer') ? 'Génération en cours...' : 'Amélioration en cours...'}
+            `;
+        }
+
+        function hideLoading(button) {
+            button.disabled = false;
+            button.textContent = button.dataset.originalText;
+        }
+
+        // Firebase Initialization and Authentication
+        window.onload = async () => {
+            try {
+                const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        currentUserId = user.uid;
+                        console.log("Authenticated as:", currentUserId);
+                    } else {
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            try {
+                                await signInWithCustomToken(auth, __initial_auth_token);
+                            } catch (error) {
+                                console.error("Error signing in with custom token:", error);
+                                await signInAnonymously(auth);
+                            }
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error("Error initializing Firebase:", error);
+            }
+        };
+
+        // Function to increment usage stats
+        async function incrementStat(statName) {
+            if (!currentUserId || !db) {
+                console.warn("Cannot increment stat: user not authenticated or db not initialized.");
+                return;
+            }
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+            const statsDocRef = doc(db, `artifacts/${appId}/users/${currentUserId}/usageStats/counts`);
+            try {
+                await setDoc(statsDocRef, { [statName]: increment(1) }, { merge: true });
+            } catch (error) {
+                console.error(`Error incrementing ${statName}:`, error);
+            }
+        }
+
+        // Event Listeners
+
+        // Image Generation
+        generateButton.addEventListener('click', async () => {
+            const prompt = promptInput.value.trim();
+            if (!prompt) { displayError("Veuillez entrer une description pour générer une image.", errorMessageDiv); return; }
+            hideError(errorMessageDiv); imageResultContainer.classList.add('hidden'); showLoading(generateButton, generateButton.textContent);
+            try {
+                const payload = { instances: { prompt: prompt }, parameters: { "sampleCount": 1 } };
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
+                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!response.ok) { const errorData = await response.json(); throw new Error(`Erreur du serveur: ${response.status} - ${errorData.error.message || 'Quelque chose a mal tourné'}`); }
+                const result = await response.json();
+                if (result.predictions && result.predictions.length > 0 && result.predictions[0].bytesBase64Encoded) {
+                    const generatedImageUrl = `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
+                    generatedImage.src = generatedImageUrl;
+                    imageResultContainer.classList.remove('hidden');
+                } else { displayError("Aucune image générée. Veuillez réessayer avec une description différente.", errorMessageDiv); }
+            } catch (error) { console.error("Erreur lors de la génération de l'image:", error); displayError(`Échec de la génération de l'image: ${error.message}", errorMessageDiv); }
+            finally { hideLoading(generateButton); }
+            await incrementStat('imageGenerations');
+        });
+
+        // Image loading error handler
+        generatedImage.addEventListener('error', () => {
+            generatedImage.src = 'https://placehold.co/600x400/CC6666/FFFFFF?text=Erreur+de+chargement+de+l\'image';
+            displayError("L'image générée n'a pas pu être affichée.", errorMessageDiv);
+        });
+
+        // Prompt Builder Tags
+        promptTags.forEach(button => {
+            button.addEventListener('click', () => {
+                const tagValue = button.dataset.value;
+                if (promptInput.value.length > 0 && !promptInput.value.endsWith(' ') && !promptInput.value.endsWith(',')) { promptInput.value += ', ' + tagValue; } else { promptInput.value += tagValue; }
+                promptInput.focus();
+            });
+        });
+
+        // Prompt Improvement (Gemini API)
+        improvePromptButton.addEventListener('click', async () => {
+            const currentPrompt = promptInput.value.trim();
+            if (!currentPrompt) { displayError("Veuillez entrer un prompt à améliorer.", errorMessageDiv); return; }
+            hideError(errorMessageDiv); showLoading(improvePromptButton, improvePromptButton.textContent);
+            try {
+                let chatHistory = [];
+                chatHistory.push({ role: "user", parts: [{ text: `Améliore ce prompt pour la génération d'images, rends-le plus descriptif et créatif, incluant des détails sur le style, l'éclairage, la composition, et l'ambiance. Le prompt doit être concis et direct, prêt à être utilisé par un modèle de génération d'images. Voici le prompt original: "${currentPrompt}"` }] });
+                const payload = { contents: chatHistory }; const apiKey = ""; const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!response.ok) { const errorData = await response.json(); throw new Error(`Erreur LLM: ${response.status} - ${errorData.error.message || 'Quelque chose a mal tourté'}`); }
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                    const improvedPrompt = result.candidates[0].content.parts[0].text.trim();
+                    promptInput.value = improvedPrompt;
+                } else { displayError("Aucune suggestion d'amélioration. Veuillez réessayer.", errorMessageDiv); }
+            } catch (error) { console.error("Erreur lors de l'amélioration du prompt:", error); displayError(`Échec de l'amélioration: ${error.message}", errorMessageDiv); }
+            finally { hideLoading(improvePromptButton); }
+            await incrementStat('promptImprovements');
+        });
+    </script>
+</body>
+</html>
